@@ -1,0 +1,9 @@
+{
+  "name": "orders-pages",
+  "entity_type": "order",
+  "pages": [
+    { "page_token": "p1", "file": "page1.jsonl" },
+    { "page_token": "p2", "file": "page2.jsonl" },
+    { "page_token": "p3", "file": "page3.jsonl" }
+  ]
+}
