@@ -170,18 +170,8 @@ def _apply_page_events(
             counts["skipped"] += 1
             continue
         if decision == "quarantine_gap":
+            # 坏事件只进隔离区，绝不直写 Sink；页内后续事件留 pulled 待续拉裁决
             ledger_repo.update_disposition(conn, ledger_id, "quarantine_gap")
-            if event["op"] == "upsert":
-                sink_repo.upsert(
-                    conn,
-                    stream_id=stream_id,
-                    entity_key=event["entity_key"],
-                    payload=event.get("payload") or {},
-                    seq=seq,
-                    event_ts=event["event_ts"],
-                )
-            else:
-                sink_repo.delete(conn, stream_id=stream_id, entity_key=event["entity_key"])
             quarantine_repo.insert(
                 conn,
                 stream_id=stream_id,
@@ -319,7 +309,7 @@ def pull_stream(stream_id: int, mode: str = "one") -> dict[str, Any]:
                 )
                 failed_page = {"index": pos, "page_token": page["page_token"], "error": page_error}
                 page_summaries.append(summary)
-                pos += 1
+                # 位点停在失败页（不 +1）：续拉从该页重试，已应用事件幂等跳过
                 streams_repo.set_pull_position(conn, stream_id, pos)
                 conn.commit()
                 break

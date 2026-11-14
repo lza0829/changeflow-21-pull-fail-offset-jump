@@ -1,0 +1,10 @@
+{
+  "name": "orders-half-pages-repaired",
+  "entity_type": "order",
+  "pages": [
+    { "page_token": "p1", "file": "page1.jsonl" },
+    { "page_token": "p2", "file": "page2.jsonl" },
+    { "page_token": "p3", "file": "page3.jsonl" }
+  ],
+  "note": "修复页源：p2 补齐 seq5；把位点设到失败页下标 1 续拉，已应用事件幂等跳过"
+}

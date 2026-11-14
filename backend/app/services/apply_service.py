@@ -88,17 +88,7 @@ def run_apply(stream_id: int) -> dict[str, Any]:
                 ledger_repo.insert_ledger(
                     conn, stream_id=stream_id, run_id=run_id, event=event, disposition=decision
                 )
-                if event["op"] == "upsert":
-                    sink_repo.upsert(
-                        conn,
-                        stream_id=stream_id,
-                        entity_key=event["entity_key"],
-                        payload=event.get("payload") or {},
-                        seq=int(event["seq"]),
-                        event_ts=event["event_ts"],
-                    )
-                else:
-                    sink_repo.delete(conn, stream_id=stream_id, entity_key=event["entity_key"])
+                # 坏事件只进隔离区，绝不直写 Sink
                 quarantine_repo.insert(
                     conn,
                     stream_id=stream_id,

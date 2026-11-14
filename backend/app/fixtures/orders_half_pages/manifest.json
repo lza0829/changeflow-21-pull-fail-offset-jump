@@ -1,0 +1,10 @@
+{
+  "name": "orders-half-pages",
+  "entity_type": "order",
+  "pages": [
+    { "page_token": "p1", "file": "page1.jsonl" },
+    { "page_token": "p2", "file": "page2_broken.jsonl" },
+    { "page_token": "p3", "file": "page3.jsonl" }
+  ],
+  "note": "p2 缺 seq5：seq3/4 先应用，seq6 成缺口进隔离 → 页失败，seq7 留 pulled 未裁决"
+}

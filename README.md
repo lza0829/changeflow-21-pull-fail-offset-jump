@@ -39,6 +39,7 @@ cd frontend && npm install && npm run dev
 - **Inventory CDC（clean）**：JSONL，seq 1→3 连续 upsert，独立实体键，用于第二路流演示。
 - **Orders CDC（分页拉取）**：绑定 `orders_pages/manifest.json`（3 页 p1/p2/p3，seq 1→9，含 delete），位点从 0 开始。
 - **Inventory CDC（分页拉取）**：绑定 `inventory_pages/manifest.json`（2 页 p1/p2，seq 1→5）。
+- **Orders CDC（半页失败）**：绑定 `orders_half_pages/manifest.json`（3 页 p1/p2/p3，seq 1→9）。p2 缺 seq5：页内 seq3/4 先应用、seq6 成缺口进隔离 → 该页 `failed`，seq7 留 `pulled` 未裁决；配套 `orders_half_pages/manifest_repaired.json` 为补齐 seq5 的修复源，用于从失败页续拉。
 
 打开「应用台」选流跑一次，再看账本 / 隔离区 / Sink / 游标页计数是否与本次报告一致。
 
@@ -57,6 +58,12 @@ cd frontend && npm install && npm run dev
 2. 故意失败：位点改成 2（跨过 p2）→「拉取一页」→ p3 的 seq 7 缺口进隔离区，任务 failed，位点停在 2。
 3. 续拉：位点改回 1 →「连续拉完」→ p2、p3 全部成功，位点到 3，游标到 9；失败任务仍可回看。
 4. 重启服务后位点与任务历史仍在（SQLite 持久化）。
+
+演示（Orders CDC（半页失败）· 半页失败夹具）：
+
+1. 「拉取一页」→ p1 成功，位点 0→1，游标 0→2。
+2. 再「拉取一页」→ p2 半页失败：seq3/4 应用、seq6 缺口进隔离区、seq7 留 `pulled`；任务 `failed`，**位点 1→1（停在失败页，不跨过）**；账本 4 行（applied 2 / quarantine 1 / 未裁决 1），隔离区 1 行，Sink 仅 ORD-3001/3002/3003，**隔离事件 ORD-3004 不进 Sink**；p3 根本没被拉取。
+3. 续拉：把源换绑到 `orders_half_pages/manifest_repaired.json`（位点仍为失败页下标 1）→「连续拉完」→ p2、p3 成功，位点 1→3，游标到 9；p2 重启后已应用的 seq3/4 幂等跳过（skipped 2），隔离区不再新增。
 
 ## 技术栈
 

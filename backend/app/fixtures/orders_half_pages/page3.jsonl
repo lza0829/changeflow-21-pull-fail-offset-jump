@@ -1,0 +1,2 @@
+{"seq":8,"op":"delete","entity_key":"ORD-3002","event_ts":"2026-11-03T08:35:00Z","payload":{}}
+{"seq":9,"op":"upsert","entity_key":"ORD-3004","event_ts":"2026-11-03T08:40:00Z","payload":{"status":"shipped","amount":210.0,"sku":"SKU-H"}}

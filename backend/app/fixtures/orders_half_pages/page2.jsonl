@@ -1,0 +1,5 @@
+{"seq":3,"op":"upsert","entity_key":"ORD-3001","event_ts":"2026-11-03T08:10:00Z","payload":{"status":"paid","amount":99.0,"sku":"SKU-E"}}
+{"seq":4,"op":"upsert","entity_key":"ORD-3003","event_ts":"2026-11-03T08:15:00Z","payload":{"status":"created","amount":75.0,"sku":"SKU-G"}}
+{"seq":5,"op":"upsert","entity_key":"ORD-3005","event_ts":"2026-11-03T08:20:00Z","payload":{"status":"created","amount":33.0,"sku":"SKU-I"}}
+{"seq":6,"op":"upsert","entity_key":"ORD-3004","event_ts":"2026-11-03T08:25:00Z","payload":{"status":"created","amount":210.0,"sku":"SKU-H"}}
+{"seq":7,"op":"upsert","entity_key":"ORD-3005","event_ts":"2026-11-03T08:30:00Z","payload":{"status":"paid","amount":33.0,"sku":"SKU-I"}}

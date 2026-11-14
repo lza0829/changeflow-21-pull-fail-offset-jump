@@ -1,0 +1,2 @@
+{"seq":1,"op":"upsert","entity_key":"ORD-3001","event_ts":"2026-11-03T08:00:00Z","payload":{"status":"created","amount":99.0,"sku":"SKU-E"}}
+{"seq":2,"op":"upsert","entity_key":"ORD-3002","event_ts":"2026-11-03T08:05:00Z","payload":{"status":"created","amount":150.0,"sku":"SKU-F"}}

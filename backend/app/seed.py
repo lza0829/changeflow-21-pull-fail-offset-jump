@@ -197,6 +197,19 @@ def init_db():
         "inventory_pages/manifest.json",
         "2 页（p1/p2），seq 1→5，库存变更",
     )
+    # 半页失败夹具：p2 缺 seq5 → 页内 seq3/4 应用、seq6 缺口隔离 → 该页 failed，位点停在该页
+    half_src = _ensure_source(
+        conn,
+        "Orders 半页失败源",
+        "orders_half_pages/manifest.json",
+        "3 页（p1/p2/p3），p2 缺 seq5：半页应用后半页失败，演示位点挡住 + 隔离不直写 Sink",
+    )
+    _ensure_source(
+        conn,
+        "Orders 半页失败源（修复）",
+        "orders_half_pages/manifest_repaired.json",
+        "与半页失败源同构、p2 补齐 seq5；换绑到该源后从失败页位点续拉",
+    )
     _ensure_stream(
         conn,
         name="Orders CDC（分页拉取）",
@@ -212,6 +225,14 @@ def init_db():
         entity_type="inventory",
         note="绑定 Inventory 分页源，位点从 0 开始逐页拉取",
         pull_source_id=inventory_src,
+    )
+    _ensure_stream(
+        conn,
+        name="Orders CDC（半页失败）",
+        fixture_path="orders_half_pages/page1.jsonl",
+        entity_type="order",
+        note="绑定 Orders 半页失败源：p2 中途失败，位点停在失败页、坏事件只进隔离区",
+        pull_source_id=half_src,
     )
     conn.commit()
     conn.close()
